@@ -1,0 +1,298 @@
+#################################
+######## General Config #########
+#################################
+
+# Configure a default setup of Home Assistant (frontend, api, etc)
+default_config:
+
+# Show the introduction message on startup.
+#introduction:
+
+# Uncomment this if you are using SSL/TLS, running in Docker container, etc.
+# http:
+#   base_url: example.duckdns.org:8123
+
+# Logs
+recorder:
+  purge_keep_days: 3
+  purge_interval: 1
+
+logger:
+  default: info  
+  logs:
+    homeassistant.components: info
+    homeassistant.components.stream: debug
+
+
+# Notify
+notify:
+  - platform: alexa_media
+    name: alexa_media
+
+# Text to speech
+tts:
+  - platform: google_translate
+    service_name: google_say
+
+
+
+
+#################################
+########### Entities ############
+#################################
+
+# Sensors
+sensor:
+  - platform: mqtt
+    name: Bridge state
+    state_topic: "zigbee2mqtt/bridge/state"
+    icon: mdi:router-wireless
+  # Weather prediction
+  - platform: yr
+  - platform: darksky
+    api_key: !secret darksky_api_key
+    forecast:
+      - 0
+    monitored_conditions:
+      - summary
+      - icon
+      - temperature
+      - apparent_temperature
+      - precip_probability
+      - cloud_cover
+      - daily_summary
+      - hourly_summary
+      - humidity
+      - nearest_storm_distance
+      - precip_type
+      - precip_intensity
+      - temperature_high
+      - temperature_low
+      - wind_bearing
+      - wind_speed
+      - pressure
+
+#Cameras
+camera:
+#  - platform: generic
+#    name: Driveway Corner
+#still_image_url: http://192.168.128.65:81/image/DrivewayCorner
+#    stream_source: http://192.168.128.65:81/livestream.htm?cam=DrivewayCorner
+#    username: admin
+#    password: !secret camera_pass
+#  - platform: mjpeg
+#    name: 3D Printer
+#    still_image_url: http://192.168.91.58/webcam/?action=snapshot
+#    mjpeg_url: http://192.168.91.58/webcam/?action=stream
+
+
+#################################
+############ Groups #############
+#################################
+
+light:
+  - platform: group
+    name: All Lights
+    entities:
+      - light.outdoor_lights
+      - light.kitchen_lights
+      - light.master_bedroom_lights
+  - platform: group
+    name: Outdoor Lights
+    entities:
+      - light.outdoor_back
+      - light.outdoor_front
+      - light.outdoor_garage
+      - light.outdoor_upstairs
+  - platform: group
+    name: Outside Lights
+    entities:
+      - light.outdoor_back
+      - light.outdoor_front
+      - light.outdoor_garage
+      - light.outdoor_upstairs
+  - platform: group
+    name: Kitchen Lights
+    entities:
+      - light.kitchen_cabinet
+      - light.kitchen_can_1
+      - light.kitchen_can_2
+      - light.kitchen_can_3
+      - light.kitchen_can_4
+      - light.kitchen_can_5
+      - light.kitchen_can_6
+      - light.kitchen_table
+      - light.kitchen_track
+  - platform: group
+    name: Master Bedroom Lights
+    entities:
+      - light.mbr_lamp
+
+
+
+#################################
+############ Scenes #############
+#################################
+
+scene:
+  - name: Kitchen Dim
+    entities:
+      light.kitchen_can_1:
+        state: true
+        brightness: 0
+      light.kitchen_can_2:
+        state: true
+        brightness: 0
+      light.kitchen_can_3:
+        state: true
+        brightness: 0
+      light.kitchen_can_4:
+        state: true
+        brightness: 1
+      light.kitchen_can_5:
+        state: true
+        brightness: 0
+      light.kitchen_can_6:
+        state: true
+        brightness: 0        
+      light.kitchen_table:
+        state: true
+        brightness: 1
+      light.kitchen_track:
+        state: false
+  - name: Kitchen Bright
+    entities:
+      light.kitchen_can_1:
+        state: true
+        brightness: 255
+      light.kitchen_can_2:
+        state: true
+        brightness: 255
+      light.kitchen_can_3:
+        state: true
+        brightness: 255
+      light.kitchen_can_4:
+        state: true
+        brightness: 255
+      light.kitchen_can_5:
+        state: true
+        brightness: 255
+      light.kitchen_can_6:
+        state: true
+        brightness: 255        
+      light.kitchen_table:
+        state: true
+        brightness: 255
+      light.kitchen_track:
+        state: true
+
+
+#################################
+########### Add-Ons #############
+#################################
+
+# Alexa
+alexa_media:
+  accounts:
+    - email: !secret amazon_user
+      password: !secret amazon_pass
+      url: amazon.com
+
+# MQTT
+mqtt:
+  password: !secret mqtt_pass
+  discovery: true
+
+
+# Zigbee
+input_boolean:
+  zigbee_permit_join:
+    name: Allow Devices to Join
+    initial: off
+    icon: mdi:cellphone-wireless
+    
+timer:
+  zigbee_permit_join:
+    name: Time Remaining
+    duration: 600
+
+webhook:
+ 
+zigbee2mqtt_networkmap:
+
+# Homekit
+homekit:
+
+# Influx DV
+influxdb:
+  host: 192.168.99.10
+  port: 8086
+  database: homeassistant
+  username: !secret influxdb_user
+  password: !secret influxdb_pass
+
+# Media Player
+media_player:
+  - platform: spotify
+    client_id: !secret spotify_client_id
+    client_secret: !secret spotify_client_secret
+
+# Climate
+nest:
+  client_id: !secret nest_client_id
+  client_secret: !secret nest_client_secret
+
+
+# Alexa
+cloud:
+  alexa:
+    filter:
+      include_entities:
+        - group.all_lights
+        - group.all_switches
+        - light.all_lights
+        - light.kitchen_cabinet
+        - light.kitchen_can_1
+        - light.kitchen_can_2
+        - light.kitchen_can_3
+        - light.kitchen_can_4
+        - light.kitchen_can_5
+        - light.kitchen_can_6
+        - light.kitchen_lights
+        - light.kitchen_table
+        - light.kitchen_track
+        - light.master_bedroom_lights
+        - light.mbr_lamp
+        - light.outdoor_back
+        - light.outdoor_front
+        - light.outdoor_garage
+        - light.outdoor_lights
+        - light.outdoor_upstairs
+        - light.outside_lights
+        - scene.kitchen_bright
+        - scene.kitchen_dim
+        - switch.fireplace
+        - switch.hot_water
+        - switch.jons_lamp
+
+
+
+#################################
+############# HA UI #############
+#################################
+
+panel_iframe:
+  networkmap:
+    title: 'Zigbee Map'
+    url: '/local/community/zigbee2mqtt_networkmap/map.html?engine=dot'
+    icon: 'mdi:graphql'
+
+
+
+#################################
+############ Includes ############
+#################################
+
+group: !include groups.yaml
+automation: !include automations.yaml
+script: !include scripts.yaml

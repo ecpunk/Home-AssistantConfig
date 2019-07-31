@@ -1,0 +1,86 @@
+- alias: Notification Test Weekly TTS
+  initial_state: 'on'
+  trigger:
+    platform: time
+    at: '07:45:00'
+  condition:
+    condition: time
+    weekday:
+      - mon
+      - tue
+      - wed
+      - thu
+      - fri
+  action:
+    - service: notify.alexa_media
+      data:
+        target: 
+          -  media_player.kitchen
+        #title: "My title for Echo show"
+        data:
+          type: announce
+          #method: all
+        message: Good morning Olivia and Fiona. Todays weather will be  
+          {{ states("sensor.dark_sky_hourly_summary")}}. The current temperature outside 
+          is {{ states("sensor.dark_sky_apparent_temperature")}} degrees. The high today 
+          is {{ states("sensor.dark_sky_daytime_high_temperature_0d")}}. There will be 
+          {% if states("sensor.dark_sky_precip_intensity") ==   '0'  -%} no rain today. {%- else -%} 
+          {{states("sensor.dark_sky_precip_intensity")}} inches of rain today, bring an umbrella. {%- endif %} 
+          {% if states("person.jon") ==   'home'  -%} Go give daddy a hug. {%- else -%} Daddy loves you and misses you.{%- endif %}
+
+- id: enable_zigbee_join
+  alias: Enable Zigbee joining
+  hide_entity: true
+  trigger:
+    platform: state
+    entity_id: input_boolean.zigbee_permit_join
+    to: 'on'
+  action:
+  - service: mqtt.publish
+    data:
+      topic: zigbee2mqtt/bridge/config/permit_join
+      payload: 'true'
+  - service: timer.start
+    data:
+      entity_id: timer.zigbee_permit_join
+- id: disable_zigbee_join
+  alias: Disable Zigbee joining
+  trigger:
+  - entity_id: input_boolean.zigbee_permit_join
+    platform: state
+    to: 'off'
+  action:
+  - data:
+      payload: 'false'
+      topic: zigbee2mqtt/bridge/config/permit_join
+    service: mqtt.publish
+  - data:
+      entity_id: timer.zigbee_permit_join
+    service: timer.cancel
+  hide_entity: true
+- id: disable_zigbee_join_timer
+  alias: Disable Zigbee joining by timer
+  hide_entity: true
+  trigger:
+  - platform: event
+    event_type: timer.finished
+    event_data:
+      entity_id: timer.zigbee_permit_join
+  action:
+  - service: mqtt.publish
+    data:
+      topic: zigbee2mqtt/bridge/config/permit_join
+      payload: 'false'
+  - service: input_boolean.turn_off
+    data:
+      entity_id: input_boolean.zigbee_permit_join
+
+- id: update_networkmap
+  alias: 'Zigbee Map aktualisieren'  
+  hide_entity: true  
+  trigger:
+    platform: time_pattern
+    minutes: '/10'
+    seconds: 00
+  action:
+    service: zigbee2mqtt_networkmap.update
