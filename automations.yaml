@@ -2,7 +2,7 @@
   initial_state: 'on'
   trigger:
     platform: time
-    at: '07:45:00'
+    at: '08:45:00'
   condition:
     condition: time
     weekday:
@@ -11,6 +11,8 @@
       - wed
       - thu
       - fri
+      - sat
+      - sun
   action:
     - service: notify.alexa_media
       data:

@@ -9,8 +9,8 @@ default_config:
 #introduction:
 
 # Uncomment this if you are using SSL/TLS, running in Docker container, etc.
-# http:
-#   base_url: example.duckdns.org:8123
+ http:
+   base_url: 192.168.99.10:8123
 
 # Logs
 recorder:
@@ -30,9 +30,9 @@ notify:
     name: alexa_media
 
 # Text to speech
-tts:
-  - platform: google_translate
-    service_name: google_say
+#tts:
+#  - platform: google_translate
+#    service_name: google_say
 
 
 
@@ -43,16 +43,18 @@ tts:
 
 # Sensors
 sensor:
-  - platform: mqtt
-    name: Bridge state
-    state_topic: "zigbee2mqtt/bridge/state"
-    icon: mdi:router-wireless
+#  - platform: mqtt
+#    name: Bridge state
+#    state_topic: "zigbee2mqtt/bridge/state"
+#    icon: mdi:router-wireless
+#  - platform: minecraft_version
   # Weather prediction
   - platform: yr
   - platform: darksky
     api_key: !secret darksky_api_key
     forecast:
       - 0
+      - 1
     monitored_conditions:
       - summary
       - icon
@@ -126,7 +128,8 @@ light:
   - platform: group
     name: Master Bedroom Lights
     entities:
-      - light.mbr_lamp
+      - light.jons_lamp
+      - light.master_bedroom_lamp
 
 
 
@@ -198,11 +201,6 @@ alexa_media:
       password: !secret amazon_pass
       url: amazon.com
 
-# MQTT
-mqtt:
-  password: !secret mqtt_pass
-  discovery: true
-
 
 # Zigbee
 input_boolean:
@@ -221,9 +219,9 @@ webhook:
 zigbee2mqtt_networkmap:
 
 # Homekit
-homekit:
+#homekit:
 
-# Influx DV
+# Influx DB
 influxdb:
   host: 192.168.99.10
   port: 8086
@@ -244,36 +242,9 @@ nest:
 
 
 # Alexa
-cloud:
-  alexa:
-    filter:
-      include_entities:
-        - group.all_lights
-        - group.all_switches
-        - light.all_lights
-        - light.kitchen_cabinet
-        - light.kitchen_can_1
-        - light.kitchen_can_2
-        - light.kitchen_can_3
-        - light.kitchen_can_4
-        - light.kitchen_can_5
-        - light.kitchen_can_6
-        - light.kitchen_lights
-        - light.kitchen_table
-        - light.kitchen_track
-        - light.master_bedroom_lights
-        - light.mbr_lamp
-        - light.outdoor_back
-        - light.outdoor_front
-        - light.outdoor_garage
-        - light.outdoor_lights
-        - light.outdoor_upstairs
-        - light.outside_lights
-        - scene.kitchen_bright
-        - scene.kitchen_dim
-        - switch.fireplace
-        - switch.hot_water
-        - switch.jons_lamp
+#cloud:
+#  alexa:
+
 
 
 

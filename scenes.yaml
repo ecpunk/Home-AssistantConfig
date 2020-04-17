@@ -1,0 +1,7 @@
+- id: '1578359826689'
+  name: New Scene
+  entities:
+    light.kitchen_track:
+      friendly_name: Kitchen Track
+      state: 'on'
+      supported_features: 8
